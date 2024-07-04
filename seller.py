@@ -12,7 +12,10 @@ logger = logging.getLogger(__file__)
 
 
 def get_product_list(last_id, client_id, seller_token):
-    """Получить список товаров магазина озон"""
+    """Функция получает список товаров магазина озон
+    Функция принимает аргументы id последнего загруженного товара, id клиента в озон, токен продавца озон
+    После выполнения функция возвращает словарь содержащий список товаров
+    """
     url = "https://api-seller.ozon.ru/v2/product/list"
     headers = {
         "Client-Id": client_id,
@@ -32,7 +35,10 @@ def get_product_list(last_id, client_id, seller_token):
 
 
 def get_offer_ids(client_id, seller_token):
-    """Получить артикулы товаров магазина озон"""
+    """Функция получения артикулов товаров магазина озон
+    На вход она получает  id клиента в озон, токен продавца озон
+    Возвращает список артикулов товаров магазина озон
+    """
     last_id = ""
     product_list = []
     while True:
@@ -49,7 +55,10 @@ def get_offer_ids(client_id, seller_token):
 
 
 def update_price(prices: list, client_id, seller_token):
-    """Обновить цены товаров"""
+    """Функция обновляет цены товаров в магазине озон
+    На вход она получает список цен товаров, id клиента в озон и его токен
+    После успешного выполнения озвращает json с обновлёнными ценами
+    """
     url = "https://api-seller.ozon.ru/v1/product/import/prices"
     headers = {
         "Client-Id": client_id,
@@ -62,7 +71,10 @@ def update_price(prices: list, client_id, seller_token):
 
 
 def update_stocks(stocks: list, client_id, seller_token):
-    """Обновить остатки"""
+    """Функция обновляет остатки товаров в магазине озон
+    На вход она получает список остатков товаров, id клиента в озон и его токен
+    После успешного выполнения озвращает json с обновлёнными остатками
+    """
     url = "https://api-seller.ozon.ru/v1/product/import/stocks"
     headers = {
         "Client-Id": client_id,
@@ -75,15 +87,21 @@ def update_stocks(stocks: list, client_id, seller_token):
 
 
 def download_stock():
-    """Скачать файл ostatki с сайта casio"""
-    # Скачать остатки с сайта
+    """Функция загружает с сайта casio файл с остатками товаров (ostatki.xls)
+    разархивирует файл, загружает содержимое файла в базу данных и удаляет файл
+    После успешного выполнения возвращает список словарей
+    Пример использования:
+    stocks = download_stock()
+    print(stocks)
+    >>[{'Модель': 'Часы_1', 'Остаток': 15}, {'Модель': 'Часы_2', 'Остаток': 20}, ...]
+    """
     casio_url = "https://timeworld.ru/upload/files/ostatki.zip"
     session = requests.Session()
     response = session.get(casio_url)
     response.raise_for_status()
     with response, zipfile.ZipFile(io.BytesIO(response.content)) as archive:
         archive.extractall(".")
-    # Создаем список остатков часов:
+
     excel_file = "ostatki.xls"
     watch_remnants = pd.read_excel(
         io=excel_file,
@@ -91,11 +109,16 @@ def download_stock():
         keep_default_na=False,
         header=17,
     ).to_dict(orient="records")
-    os.remove("./ostatki.xls")  # Удалить файл
+    os.remove("./ostatki.xls")
     return watch_remnants
 
 
 def create_stocks(watch_remnants, offer_ids):
+    '''Функция создаёт список словарей с остатками товара
+    На вход она получает watch_remnants - список словарей с остатками товара в магазине casio
+    offer_ids - список артикулов товаров магазина озон
+    После успешного выполнения функция возвращает список словарей stocks содержащий код товара и остатки
+    '''
     # Уберем то, что не загружено в seller
     stocks = []
     for watch in watch_remnants:
@@ -116,6 +139,11 @@ def create_stocks(watch_remnants, offer_ids):
 
 
 def create_prices(watch_remnants, offer_ids):
+    '''Функция создаёт список словарей с ценой товара
+    На вход она получает watch_remnants - список словарей с остатками товара в магазине casio
+    offer_ids - список артикулов товаров магазина озон
+    После успешного выполнения функция возвращает список словарей prices
+    '''    
     prices = []
     for watch in watch_remnants:
         if str(watch.get("Код")) in offer_ids:
@@ -131,17 +159,28 @@ def create_prices(watch_remnants, offer_ids):
 
 
 def price_conversion(price: str) -> str:
-    """Преобразовать цену. Пример: 5'990.00 руб. -> 5990"""
+    """Функция преобразует формат отображения цены.
+    Функция принимет значение price в формате строки и возвращает так же строку, но в виде числа
+    Пример: цена "5'990.00 руб." будет преобразована в '5990'"""
     return re.sub("[^0-9]", "", price.split(".")[0])
 
 
 def divide(lst: list, n: int):
-    """Разделить список lst на части по n элементов"""
+    """Функция разделяет список lst на части по n элементов
+    На вход функция получает спиок и целое число на которое нужно поделить список
+    """
     for i in range(0, len(lst), n):
         yield lst[i : i + n]
 
-
+  
 async def upload_prices(watch_remnants, client_id, seller_token):
+    '''Функция обновляет цены товаров в магазине озон
+    На вход она получает: 
+    watch_remnants - список словарей с остатками товара в магазине casio
+    client_id - id клиента в озон
+    seller_token - токен продавца озон
+    После успешного выполнения функция возвращает список словарей prices с обновлёнными ценами
+    '''
     offer_ids = get_offer_ids(client_id, seller_token)
     prices = create_prices(watch_remnants, offer_ids)
     for some_price in list(divide(prices, 1000)):
@@ -150,6 +189,15 @@ async def upload_prices(watch_remnants, client_id, seller_token):
 
 
 async def upload_stocks(watch_remnants, client_id, seller_token):
+    '''Функция обновляет остатки товаров в магазине озон
+    На вход она получает: 
+    watch_remnants - список словарей с остатками товара в магазине casio
+    client_id - id клиента в озон
+    seller_token - токен продавца озон
+    После успешного выполнения функция возвращает кортеж  из двух списков:
+    not_empty - список словарей с остатками отличными от 0
+    stocks - список словарей со всеми остатками
+    '''
     offer_ids = get_offer_ids(client_id, seller_token)
     stocks = create_stocks(watch_remnants, offer_ids)
     for some_stock in list(divide(stocks, 100)):

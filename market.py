@@ -13,12 +13,13 @@ logger = logging.getLogger(__file__)
 def get_product_list(page, campaign_id, access_token):
     """Функция получает список товаров магазина яндкс маркет
 
-    Функция принимает аргументы:
-    page - страница с которой нужно начать получение товара
-    campaign_id - id кампании
-    access_token - токен доступа к яндекс маркету
-    
-    После выполнения функция возвращает словарь содержащий список товаров
+    Args:
+    page (int): страница с которой нужно начать получение товара
+    campaign_id (int): id кампании
+    access_token (str): токен доступа к яндекс маркету
+
+    Returns:
+    dict: словарь содержащий список товаров
     """
     endpoint_url = "https://api.partner.market.yandex.ru/"
     headers = {
@@ -41,12 +42,13 @@ def get_product_list(page, campaign_id, access_token):
 def update_stocks(stocks, campaign_id, access_token):
     """Функция обновляет остатки товаров в магазине яндекс маркет
     
-    На вход она получает:
-    stocks - список словарей с остатками товара в магазине
-    campaign_id - id кампании
-    access_token - токен доступа к яндекс маркету
-    
-    После успешного выполнения озвращает json с обновлёнными остатками
+    Args:
+    stocks (list): список словарей с остатками товара в магазине
+    campaign_id (int): id кампании
+    access_token (str): токен доступа к яндекс маркету
+
+    Returns:
+    dict: JSON-объекст с обновлёнными остатками
     """
     endpoint_url = "https://api.partner.market.yandex.ru/"
     headers = {
@@ -66,11 +68,13 @@ def update_stocks(stocks, campaign_id, access_token):
 def update_price(prices, campaign_id, access_token):
     '''Функция обновляет цены товаров в магазине яндекс маркет
 
-    На вход она получает: 
-    prices - список словарей с ценой товара
-    campaig_id - id кампании 
-    acecess_token - окен доступа к яндекс маркету
-    После успешного выполнения функция возвращает JSON-объект response_object, содержащий информацию об обновлении цен.
+    Args:
+    prices (list): список словарей с ценой товара
+    campaig_id (int): id кампании 
+    acecess_token (str): токен доступа к яндекс маркету
+
+    Returns:
+    dict: JSON-объекст, содержащий информацию об обновлении цен.
     '''
     endpoint_url = "https://api.partner.market.yandex.ru/"
     headers = {
@@ -90,11 +94,12 @@ def update_price(prices, campaign_id, access_token):
 def get_offer_ids(campaign_id, market_token):
     """Функция получения артикулов товаров магазина яндекс маркет
 
-    На вход она получает:
-    campaign_id - id кампании
-    market_token - токен продавца яндекс маркета
-    
-    Возвращает список артикулов товаров магазина яндекс маркет
+    Args:
+    campaign_id (int): id кампании
+    market_token (str): токен продавца яндекс маркета
+
+    Returns:
+    list: список артикулов товаров магазина яндекс маркет
     """
     page = ""
     product_list = []
@@ -113,12 +118,13 @@ def get_offer_ids(campaign_id, market_token):
 def create_stocks(watch_remnants, offer_ids, warehouse_id):
     '''Функция создаёт список словарей с остатками товара
 
-    На вход она получает:
-    watch_remnants - список словарей с остатками товара в магазине casio
-    offer_ids - список артикулов то варов магазина яндекс маркета
-    warehouse_id - id магазина ядекс маркета
-    
-    После успешного выполнения функция возвращает список словарей stocks содержащий код товара и остатки
+    Args:
+    watch_remnants (list): список словарей с остатками товара в магазине casio
+    offer_ids (list): список артикулов то варов магазина яндекс маркета
+    warehouse_id (int): id магазина ядекс маркета
+
+    Returns:
+    list: список словарей содержащий код товара и остатки
     '''
     # Уберем то, что не загружено в market
     stocks = list()
@@ -167,11 +173,12 @@ def create_stocks(watch_remnants, offer_ids, warehouse_id):
 def create_prices(watch_remnants, offer_ids):
     '''Функция создаёт список словарей с ценой товара
 
-    На вход она получает:
-    watch_remnants - список словарей с остатками товара в магазине casio
-    offer_ids - список артикулов товаров магазина яндекс маркет
-    
-    После успешного выполнения функция возвращает список словарей prices
+    Args:
+    watch_remnants (list): список словарей с остатками товара в магазине casio
+    offer_ids (list): список артикулов товаров магазина яндекс маркет
+
+    Returns:
+    list: спиисок словарей содержащий артикул товара и цену
     '''    
 
     prices = []
@@ -196,12 +203,13 @@ def create_prices(watch_remnants, offer_ids):
 async def upload_prices(watch_remnants, campaign_id, market_token):
     '''Функция обновляет цены товаров в магазине яндекс маркет
 
-    На вход она получает: 
-    watch_remnants - список словарей с остатками товара в магазине casio
-    campaign_id - id кампании
-    market_token - токен продавца яндекс маркета
-    
-    После успешного выполнения функция возвращает список словарей prices с обновлёнными ценами
+    Args:
+    watch_remnants (list): список словарей с остатками товара в магазине casio
+    campaign_id (int): id кампании
+    market_token (str): токен продавца яндекс маркета
+
+    Returns:
+    list: список словарей с обновлёнными ценами
     '''
     offer_ids = get_offer_ids(campaign_id, market_token)
     prices = create_prices(watch_remnants, offer_ids)
@@ -213,13 +221,13 @@ async def upload_prices(watch_remnants, campaign_id, market_token):
 async def upload_stocks(watch_remnants, campaign_id, market_token, warehouse_id):
     '''Функция обновляет остатки товаров в магазине яндекс маркет
 
-    На вход она получает: 
-    watch_remnants - список словарей с остатками товара в магазине casio
-    campaign_id - id кампании в яндекс маркете
-    market_token - токен продавца яндекс маркета
-    После успешного выполнения функция возвращает кортеж  из двух списков:
-    not_empty - список словарей с остатками отличными от 0
-    stocks - список словарей со всеми остатками
+    Args:
+    watch_remnants (list): список словарей с остатками товара в магазине casio
+    campaign_id (int): id кампании в яндекс маркете
+    market_token (str): токен продавца яндекс маркета
+
+    Returns:
+    tuple: кортеж из двух списков, not_empty - список словарей с остатками отличными от 0, и stocks - список словарей со всеми остатками
     '''
     offer_ids = get_offer_ids(campaign_id, market_token)
     stocks = create_stocks(watch_remnants, offer_ids, warehouse_id)
@@ -232,6 +240,15 @@ async def upload_stocks(watch_remnants, campaign_id, market_token, warehouse_id)
 
 
 def main():
+    '''Для работы файлу необходимо передать:
+    MARKET_TOKEN - токен продавца яндекс маркета
+    FBS_ID - id кампании FBS
+    DBS_ID - id кампании DBS
+    WAREHOUSE_FBS_ID - id склада FBS
+    WAREHOUSE_DBS_ID - id склада DBS
+
+    Данный файл скачивает остатки товаров с магазина casio и обновляет их в магазине яндекс маркет
+    '''
     env = Env()
     market_token = env.str("MARKET_TOKEN")
     campaign_fbs_id = env.str("FBS_ID")

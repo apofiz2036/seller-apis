@@ -14,12 +14,13 @@ logger = logging.getLogger(__file__)
 def get_product_list(last_id, client_id, seller_token):
     """Функция получает список товаров магазина озон.
     
-    Функция принимает аргументы:
-    last_id - id последнего товара
-    client_id - id клиента магазина озон
-    seller_token - токен продавца магазина озон
-    
-    После выполнения функция возвращает словарь содержащий список товаров
+    Args:
+    last_id (int): id последнего товара
+    client_id (int): id клиента магазина озон
+    seller_token (str): токен продавца магазина озон
+
+    Returns:
+    dict: JSON-объект содержащий список товаров
     """
     url = "https://api-seller.ozon.ru/v2/product/list"
     headers = {
@@ -42,11 +43,12 @@ def get_product_list(last_id, client_id, seller_token):
 def get_offer_ids(client_id, seller_token):
     """Функция получения артикулов товаров магазина озон.
     
-    На вход она получает:
-    client_id - id клиента магазина озон
-    seller_token - токен продавца магазина озон
-    
-    Возвращает список артикулов товаров магазина озон
+    Args:
+    client_id (int): id клиента магазина озон
+    seller_token (str): токен продавца магазина озон
+
+    Returns:
+    list: список артикулов товаров магазина озон
     """
     last_id = ""
     product_list = []
@@ -66,12 +68,13 @@ def get_offer_ids(client_id, seller_token):
 def update_price(prices: list, client_id, seller_token):
     """Функция обновляет цены товаров в магазине озон.
     
-    На вход она получает:
-    prices - список словарей с ценой товара
-    client_id - id клиента магазина озон
-    seller_token - токен продавца магазина озон
-    
-    После успешного выполнения озвращает json с обновлёнными ценами
+    Args:
+    prices (list): список словарей с ценой товара
+    client_id (int): id клиента магазина озон
+    seller_token (str): токен продавца магазина озон
+
+    Returns:
+    list: JSON-объект с обновлёнными ценами
     """
     url = "https://api-seller.ozon.ru/v1/product/import/prices"
     headers = {
@@ -87,12 +90,13 @@ def update_price(prices: list, client_id, seller_token):
 def update_stocks(stocks: list, client_id, seller_token):
     """Функция обновляет остатки товаров в магазине озон
     
-    На вход она получает:
-    stocks - список словарей с остатками товара
-    client_id - id клиента магазина озон
-    seller_token - токен продавца магазина озон
-    
-    После успешного выполнения озвращает json с обновлёнными остатками
+    Args:
+    stocks (list): список словарей с остатками товара
+    client_id (int): id клиента магазина озон
+    seller_token (str): токен продавца магазина озон
+
+    Returns:
+    list: JSON-объект с обновлёнными остатками
     """
     url = "https://api-seller.ozon.ru/v1/product/import/stocks"
     headers = {
@@ -106,14 +110,11 @@ def update_stocks(stocks: list, client_id, seller_token):
 
 
 def download_stock():
-    """Функция загружает с сайта casio файл с остатками товаров (ostatki.xls)
-    
-    Функция разархивирует файл, загружает содержимое файла в базу данных и удаляет файл
-    После успешного выполнения возвращает список словарей
-    Пример использования:
-    stocks = download_stock()
-    print(stocks)
-    >>[{'Модель': 'Часы_1', 'Остаток': 15}, {'Модель': 'Часы_2', 'Остаток': 20}, ...]
+    """Функция загружает с сайта casio файл с остатками товаров (ostatki.xls). 
+    Разархивирует файл, загружает содержимое файла в базу данных и удаляет файл.
+
+    Returns:
+    list: список словарей с остатками товара
     """
     casio_url = "https://timeworld.ru/upload/files/ostatki.zip"
     session = requests.Session()
@@ -136,11 +137,12 @@ def download_stock():
 def create_stocks(watch_remnants, offer_ids):
     '''Функция создаёт список словарей с остатками товара
     
-    На вход она получает:
-    watch_remnants - список словарей с остатками товара в магазине casio
-    offer_ids - список артикулов товаров магазина озон
-    
-    После успешного выполнения функция возвращает список словарей stocks содержащий код товара и остатки
+    Args:
+    watch_remnants (list): список словарей с остатками товара в магазине casio
+    offer_ids (list:) список артикулов товаров магазина озон
+
+    Returns:
+    list: список словарей stocks содержащий код товара и остатки
     '''
     # Уберем то, что не загружено в seller
     stocks = []
@@ -164,11 +166,12 @@ def create_stocks(watch_remnants, offer_ids):
 def create_prices(watch_remnants, offer_ids):
     '''Функция создаёт список словарей с ценой товара
     
-    На вход она получает:
-    watch_remnants - список словарей с остатками товара в магазине casio
-    offer_ids - список артикулов товаров магазина озон
-    
-    После успешного выполнения функция возвращает список словарей prices
+    Args:
+    watch_remnants (list): список словарей с остатками товара в магазине casio
+    offer_ids (list): список артикулов товаров магазина озон
+
+    Returns:
+    list: список словарей содержащий артикул товара и цену
     '''    
     prices = []
     for watch in watch_remnants:
@@ -206,12 +209,13 @@ def divide(lst: list, n: int):
 async def upload_prices(watch_remnants, client_id, seller_token):
     '''Функция обновляет цены товаров в магазине озон
     
-    На вход она получает: 
-    watch_remnants - список словарей с остатками товара в магазине casio
-    client_id - id клиента в озон
-    seller_token - токен продавца озон
-    
-    После успешного выполнения функция возвращает список словарей prices с обновлёнными ценами
+    Args:
+    watch_remnants (list): список словарей с остатками товара в магазине casio
+    client_id (int): id клиента в озон
+    seller_token (str): токен продавца озон
+
+    Returns:
+    list: JSON-объект с с обновлёнными ценами
     '''
     offer_ids = get_offer_ids(client_id, seller_token)
     prices = create_prices(watch_remnants, offer_ids)
@@ -223,14 +227,13 @@ async def upload_prices(watch_remnants, client_id, seller_token):
 async def upload_stocks(watch_remnants, client_id, seller_token):
     '''Функция обновляет остатки товаров в магазине озон
     
-    На вход она получает: 
-    watch_remnants - список словарей с остатками товара в магазине casio
-    client_id - id клиента в озон
-    seller_token - токен продавца озон
-    
-    После успешного выполнения функция возвращает кортеж  из двух списков:
-    not_empty - список словарей с остатками отличными от 0
-    stocks - список словарей со всеми остатками
+    Args: 
+    watch_remnants (list): список словарей с остатками товара в магазине casio
+    client_id (int): id клиента в озон
+    seller_token (str): токен продавца озон
+
+    Returns:
+    tuple: кортеж из двух списков, not_empty - список словарей с остатками отличными от 0, и stocks - список словарей со всеми остатками
     '''
     offer_ids = get_offer_ids(client_id, seller_token)
     stocks = create_stocks(watch_remnants, offer_ids)
@@ -241,6 +244,12 @@ async def upload_stocks(watch_remnants, client_id, seller_token):
 
 
 def main():
+    '''Для работы файлу необходимо передать:
+    SELLER_TOKEN - токен продавца магазина озон
+    CLIENT_ID - id клиента магазина озон
+
+    Данный файл скачивает остатки товаров с магазина casio и обновляет их в магазине озон
+    '''
     env = Env()
     seller_token = env.str("SELLER_TOKEN")
     client_id = env.str("CLIENT_ID")

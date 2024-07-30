@@ -15,8 +15,8 @@ def get_product_list(last_id, client_id, seller_token):
     """Функция получает список товаров магазина озон.
     
     Args:
-    last_id (int): id последнего товара
-    client_id (int): id клиента магазина озон
+    last_id (str): id последнего товара
+    client_id (str): id клиента магазина озон
     seller_token (str): токен продавца магазина озон
 
     Returns:
@@ -44,7 +44,7 @@ def get_offer_ids(client_id, seller_token):
     """Функция получения артикулов товаров магазина озон.
     
     Args:
-    client_id (int): id клиента магазина озон
+    client_id (str): id клиента магазина озон
     seller_token (str): токен продавца магазина озон
 
     Returns:
@@ -70,7 +70,7 @@ def update_price(prices: list, client_id, seller_token):
     
     Args:
     prices (list): список словарей с ценой товара
-    client_id (int): id клиента магазина озон
+    client_id (str): id клиента магазина озон
     seller_token (str): токен продавца магазина озон
 
     Returns:
@@ -92,7 +92,7 @@ def update_stocks(stocks: list, client_id, seller_token):
     
     Args:
     stocks (list): список словарей с остатками товара
-    client_id (int): id клиента магазина озон
+    client_id (str): id клиента магазина озон
     seller_token (str): токен продавца магазина озон
 
     Returns:
@@ -211,7 +211,7 @@ async def upload_prices(watch_remnants, client_id, seller_token):
     
     Args:
     watch_remnants (list): список словарей с остатками товара в магазине casio
-    client_id (int): id клиента в озон
+    client_id (str): id клиента в озон
     seller_token (str): токен продавца озон
 
     Returns:
@@ -229,7 +229,7 @@ async def upload_stocks(watch_remnants, client_id, seller_token):
     
     Args: 
     watch_remnants (list): список словарей с остатками товара в магазине casio
-    client_id (int): id клиента в озон
+    client_id (str): id клиента в озон
     seller_token (str): токен продавца озон
 
     Returns:

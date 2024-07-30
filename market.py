@@ -14,9 +14,9 @@ def get_product_list(page, campaign_id, access_token):
     """Функция получает список товаров магазина яндкс маркет
 
     Args:
-    page (int): страница с которой нужно начать получение товара
-    campaign_id (int): id кампании
-    access_token (str): токен доступа к яндекс маркету
+    page (str): страница с которой нужно начать получение товара 
+    campaign_id (int): id кампании 
+    access_token (str): токен доступа к яндекс маркету 
 
     Returns:
     dict: словарь содержащий список товаров
@@ -121,7 +121,7 @@ def create_stocks(watch_remnants, offer_ids, warehouse_id):
     Args:
     watch_remnants (list): список словарей с остатками товара в магазине casio
     offer_ids (list): список артикулов то варов магазина яндекс маркета
-    warehouse_id (int): id магазина ядекс маркета
+    warehouse_id (int): id магазина яндекс маркета
 
     Returns:
     list: список словарей содержащий код товара и остатки

@@ -15,7 +15,7 @@ def get_product_list(page, campaign_id, access_token):
 
     Args:
     page (str): страница с которой нужно начать получение товара 
-    campaign_id (int64): id кампании 
+    campaign_id (str): id кампании 
     access_token (str): токен доступа к яндекс маркету 
 
     Returns:
@@ -44,7 +44,7 @@ def update_stocks(stocks, campaign_id, access_token):
     
     Args:
     stocks (list): список словарей с остатками товара в магазине
-    campaign_id (int64): id кампании
+    campaign_id (str): id кампании
     access_token (str): токен доступа к яндекс маркету
 
     Returns:
@@ -70,7 +70,7 @@ def update_price(prices, campaign_id, access_token):
 
     Args:
     prices (list): список словарей с ценой товара
-    campaig_id (int64): id кампании 
+    campaig_id (str): id кампании 
     acecess_token (str): токен доступа к яндекс маркету
 
     Returns:
@@ -95,7 +95,7 @@ def get_offer_ids(campaign_id, market_token):
     """Функция получения артикулов товаров магазина яндекс маркет
 
     Args:
-    campaign_id (int64): id кампании
+    campaign_id (str): id кампании
     market_token (str): токен продавца яндекс маркета
 
     Returns:
@@ -121,7 +121,7 @@ def create_stocks(watch_remnants, offer_ids, warehouse_id):
     Args:
     watch_remnants (list): список словарей с остатками товара в магазине casio
     offer_ids (list): список артикулов товаров магазина яндекс маркета
-    warehouse_id (int64): id магазина яндекс маркета
+    warehouse_id (str): id магазина яндекс маркета
 
     Returns:
     list: список словарей содержащий код товара и остатки
@@ -205,7 +205,7 @@ async def upload_prices(watch_remnants, campaign_id, market_token):
 
     Args:
     watch_remnants (list): список словарей с остатками товара в магазине casio
-    campaign_id (int64): id кампании
+    campaign_id (str): id кампании
     market_token (str): токен продавца яндекс маркета
 
     Returns:
@@ -223,7 +223,7 @@ async def upload_stocks(watch_remnants, campaign_id, market_token, warehouse_id)
 
     Args:
     watch_remnants (list): список словарей с остатками товара в магазине casio
-    campaign_id (int64): id кампании в яндекс маркете
+    campaign_id (str): id кампании в яндекс маркете
     market_token (str): токен продавца яндекс маркета
 
     Returns:
